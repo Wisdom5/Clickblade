@@ -180,4 +180,11 @@ sysinfo.txt
 *.keystore
 .env
 
+# Firebase temporary files
+*.framework.zip
+*.xcframework.zip
+*.symbols.zip
+*.tmp
+/Firebase/*.tgz
+
 # End of https://www.toptal.com/developers/gitignore/api/firebase,unity,git,rider

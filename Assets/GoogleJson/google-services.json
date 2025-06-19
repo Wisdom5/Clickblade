@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1083157819705",
+    "project_id": "clickblade-a05e2",
+    "storage_bucket": "clickblade-a05e2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083157819705:android:d292707f3355d9eb2238e8",
+        "android_client_info": {
+          "package_name": "com.Wisdom.Clickblade"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJwKWbFTGqBgDwgfOaq_7X-KIFtKXlJXc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

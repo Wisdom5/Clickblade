@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="gcm_defaultSenderId" translatable="false">1083157819705</string>
+  <string name="google_storage_bucket" translatable="false">clickblade-a05e2.firebasestorage.app</string>
+  <string name="project_id" translatable="false">clickblade-a05e2</string>
+  <string name="google_api_key" translatable="false">AIzaSyDJwKWbFTGqBgDwgfOaq_7X-KIFtKXlJXc</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDJwKWbFTGqBgDwgfOaq_7X-KIFtKXlJXc</string>
+  <string name="google_app_id" translatable="false">1:1083157819705:android:d292707f3355d9eb2238e8</string>
+</resources>
