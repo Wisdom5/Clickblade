@@ -185,6 +185,6 @@ sysinfo.txt
 *.xcframework.zip
 *.symbols.zip
 *.tmp
-/Firebase/*.tgz
+*.tgz
 
 # End of https://www.toptal.com/developers/gitignore/api/firebase,unity,git,rider
