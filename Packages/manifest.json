@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.16.9",
     "com.google.external-dependency-manager": "file:Firebase/com.google.external-dependency-manager-1.2.186.tgz",
     "com.google.firebase.app": "file:Firebase/com.google.firebase.app-12.10.0.tgz",
     "com.google.firebase.remote-config": "file:Firebase/com.google.firebase.remote-config-12.10.0.tgz",
