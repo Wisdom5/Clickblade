@@ -1,0 +1,9 @@
+{
+  "name": "Core",
+  "references": [
+    "VContainer",
+    "UniTask",
+    "Features.Firebase.Declaration",
+    "Features.Firebase.Implementation"
+  ]
+}

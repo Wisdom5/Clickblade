@@ -1,0 +1,6 @@
+{
+  "name": "Features.Firebase.Declaration",
+  "references": [
+    "UniTask"
+  ]
+}
