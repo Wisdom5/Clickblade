@@ -11,12 +11,14 @@ namespace Core.Bootstrap
     {
         private readonly IFirebaseService _firebaseService;
         private readonly RemoteConfigService _remoteConfigService;
+        private readonly IInputSystemService _inputSystemService;
 
-        // Конструктор для инъекции зависимостей
-        public GameBootstrapper(IFirebaseService firebaseService, RemoteConfigService remoteConfigService)
+        public GameBootstrapper(IFirebaseService firebaseService, RemoteConfigService remoteConfigService,
+            IInputSystemService inputService)
         {
             _firebaseService = firebaseService;
             _remoteConfigService = remoteConfigService;
+            _inputSystemService = inputService;
         }
 
         public void Start()
@@ -28,6 +30,7 @@ namespace Core.Bootstrap
         {
             try
             {
+                _inputSystemService.Initialize();
                 await _firebaseService.InitializeAsync();
                 await _remoteConfigService.InitializeAsync();
 

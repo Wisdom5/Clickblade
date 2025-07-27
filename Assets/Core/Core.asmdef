@@ -4,6 +4,7 @@
     "VContainer",
     "UniTask",
     "Features.Firebase.Declaration",
-    "Features.Firebase.Implementation"
+    "Features.Firebase.Implementation",
+    "Unity.InputSystem"
   ]
 }

@@ -9,9 +9,10 @@ namespace Core.Bootstrap
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<IInputSystemService, InputSystemService>(Lifetime.Singleton);
             builder.Register<IFirebaseService, FirebaseService>(Lifetime.Singleton);
             builder.Register<RemoteConfigService>(Lifetime.Singleton);
-            
+
             builder.RegisterEntryPoint<GameBootstrapper>();
         }
     }
