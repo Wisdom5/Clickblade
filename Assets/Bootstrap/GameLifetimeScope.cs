@@ -1,9 +1,11 @@
+using Core;
 using Features.Firebase.Declaration;
 using Features.Firebase.Implementation;
+using Features.GamePlay.Scripts.Presentation;
 using VContainer;
 using VContainer.Unity;
 
-namespace Core.Bootstrap
+namespace Bootstrap
 {
     public class GameLifetimeScope : LifetimeScope
     {
@@ -12,6 +14,8 @@ namespace Core.Bootstrap
             builder.Register<IInputSystemService, InputSystemService>(Lifetime.Singleton);
             builder.Register<IFirebaseService, FirebaseService>(Lifetime.Singleton);
             builder.Register<RemoteConfigService>(Lifetime.Singleton);
+
+            builder.RegisterComponentInHierarchy<KnifeView>();
 
             builder.RegisterEntryPoint<GameBootstrapper>();
         }

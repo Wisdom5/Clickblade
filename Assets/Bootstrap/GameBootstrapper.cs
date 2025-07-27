@@ -1,11 +1,12 @@
 using System;
+using Core;
 using Cysharp.Threading.Tasks;
 using Features.Firebase.Declaration;
 using Features.Firebase.Implementation;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace Core.Bootstrap
+namespace Bootstrap
 {
     public class GameBootstrapper : IStartable
     {

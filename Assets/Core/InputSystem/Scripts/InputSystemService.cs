@@ -11,6 +11,7 @@ namespace Core
         public void Initialize()
         {
             InputActions = new InputActions();
+            Enable();
         }
 
         public void Enable()

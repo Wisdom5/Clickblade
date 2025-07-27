@@ -1,0 +1,22 @@
+{
+  "name": "Bootstrap",
+  "rootNamespace": "",
+  "references": [
+    "Core",
+    "VContainer",
+    "UniTask",
+    "Features.Firebase.Declaration",
+    "Features.Firebase.Implementation",
+    "Unity.InputSystem",
+    "Features.GamePlay.Presentation"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

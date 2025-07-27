@@ -1,3 +1,18 @@
 {
-  "name": "Features.GamePlay.Presentation"
+    "name": "Features.GamePlay.Presentation",
+    "rootNamespace": "",
+    "references": [
+        "Core",
+        "VContainer",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
