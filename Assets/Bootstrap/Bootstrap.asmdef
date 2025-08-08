@@ -8,7 +8,9 @@
     "Features.Firebase.Declaration",
     "Features.Firebase.Implementation",
     "Unity.InputSystem",
-    "Features.GamePlay.Presentation"
+    "Features.GamePlay.Presentation",
+    "Features.GamePlay.Implementation",
+    "Features.GamePlay.Declaration"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

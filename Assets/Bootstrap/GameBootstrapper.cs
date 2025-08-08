@@ -3,6 +3,7 @@ using Core;
 using Cysharp.Threading.Tasks;
 using Features.Firebase.Declaration;
 using Features.Firebase.Implementation;
+using Features.GamePlay.Scripts.Declaration;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -13,13 +14,18 @@ namespace Bootstrap
         private readonly IFirebaseService _firebaseService;
         private readonly RemoteConfigService _remoteConfigService;
         private readonly IInputSystemService _inputSystemService;
+        private readonly IKnifePoolService _knifePoolService;
 
-        public GameBootstrapper(IFirebaseService firebaseService, RemoteConfigService remoteConfigService,
-            IInputSystemService inputService)
+        public GameBootstrapper(
+            IFirebaseService firebaseService,
+            RemoteConfigService remoteConfigService,
+            IInputSystemService inputService,
+            IKnifePoolService knifePoolService)
         {
             _firebaseService = firebaseService;
             _remoteConfigService = remoteConfigService;
             _inputSystemService = inputService;
+            _knifePoolService = knifePoolService;
         }
 
         public void Start()
@@ -35,7 +41,7 @@ namespace Bootstrap
                 await _firebaseService.InitializeAsync();
                 await _remoteConfigService.InitializeAsync();
 
-                Debug.Log("Bootstrap complete");
+                Debug.Log("[GameBootstrapper] Initialized.");
             }
             catch (Exception exception)
             {

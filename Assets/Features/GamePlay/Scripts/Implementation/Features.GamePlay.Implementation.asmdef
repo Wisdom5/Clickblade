@@ -1,3 +1,20 @@
 {
-  "name": "Features.GamePlay.Implementation"
+    "name": "Features.GamePlay.Implementation",
+    "rootNamespace": "",
+    "references": [
+        "UniTask",
+        "VContainer",
+        "VContainer.Unity",
+        "Features.GamePlay.Presentation",
+        "Features.GamePlay.Declaration"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
