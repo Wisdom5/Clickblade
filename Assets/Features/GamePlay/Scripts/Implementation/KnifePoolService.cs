@@ -14,16 +14,16 @@ namespace Features.GamePlay.Scripts.Implementation
     {
         private readonly Vector3 _spawnPos = new(0, 0, 0);
         private readonly Vector3 _spawnRot = new(0, 90, 90);
-        private readonly Vector3 _spawnScale = new(40, 40, 40);
+        private readonly Vector3 _spawnScale = new(25, 25, 25);
         private readonly float _defaultReturnTime = 5f; //todo get from remote config
-        private readonly KnifeView _knifePrefab;
+        private readonly IKnifeView _knifePrefab;
         private readonly Transform _container;
         private readonly bool _collectionChecks = true;
         private readonly bool _disableCollectionChecksInRelease = true;
 
-        private readonly List<KnifeView> _activeKnives = new();
-        private KnifeView _readyKnife;
-        private IObjectPool<KnifeView> _pool;
+        private readonly List<IKnifeView> _activeKnives = new();
+        private IKnifeView _readyKnife;
+        private IObjectPool<IKnifeView> _pool;
         private int _maxPoolSize;
         private readonly int _initialPoolSize;
 
@@ -31,7 +31,7 @@ namespace Features.GamePlay.Scripts.Implementation
 
         //todo make maxpoolsize logic(increase pool size or rectreacte knifes from old knifes)
         public KnifePoolService(
-            KnifeView knifePrefab,
+            IKnifeView knifePrefab,
             Transform container,
             int initialPoolSize = 10,
             int maxPoolSize = 50)
@@ -48,7 +48,7 @@ namespace Features.GamePlay.Scripts.Implementation
             Debug.Log("[KnifePoolService]  Initialized.");
         }
 
-        private IObjectPool<KnifeView> Pool
+        private IObjectPool<IKnifeView> Pool
         {
             get
             {
@@ -62,7 +62,7 @@ namespace Features.GamePlay.Scripts.Implementation
                         useCollectionChecks = false;
                     }
 #endif
-                    _pool = new ObjectPool<KnifeView>(
+                    _pool = new ObjectPool<IKnifeView>(
                         CreatePooledItem,
                         OnTakeFromPool,
                         OnReturnedToPool,
@@ -76,21 +76,21 @@ namespace Features.GamePlay.Scripts.Implementation
             }
         }
 
-        private KnifeView GetKnife()
+        private IKnifeView GetKnife()
         {
             var knife = TryGetKnifeFromPool();
 
             if (knife == null)
             {
                 Debug.LogError("[KnifePoolService] Failed to get knife from pool. Pool might be exhausted.");
-                return null;
+                throw new InvalidOperationException("[KnifePoolService] knife can not be null.");
             }
 
             _activeKnives.Add(knife);
             return knife;
         }
 
-        public async UniTask<KnifeView> GetKnifeAsync(CancellationToken cancellationToken = default)
+        public async UniTask<IKnifeView> GetKnifeAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -99,7 +99,7 @@ namespace Features.GamePlay.Scripts.Implementation
             return GetKnife();
         }
 
-        private KnifeView TryGetKnifeFromPool()
+        private IKnifeView TryGetKnifeFromPool()
         {
             try
             {
@@ -120,7 +120,7 @@ namespace Features.GamePlay.Scripts.Implementation
             }
         }
 
-        public void ReleaseKnife(KnifeView knife)
+        public void ReleaseKnife(IKnifeView knife)
         {
             if (knife == null)
             {
@@ -174,40 +174,61 @@ namespace Features.GamePlay.Scripts.Implementation
             }
         }
 
-        private KnifeView CreatePooledItem()
+        private IKnifeView CreatePooledItem()
         {
-            var instance = Object.Instantiate(_knifePrefab, _container);
+            var knifeObject = ToKnifeView(_knifePrefab);
+            if (knifeObject == null)
+            {
+                throw new InvalidOperationException("Knife prefab cannot be null when creating pooled item.");
+            }
+
+            var instance = Object.Instantiate(knifeObject, _container);
 
             instance.gameObject.SetActive(false);
-            instance.Initialize(ReleaseKnife);
+            _knifePrefab.Initialize(ReleaseKnife);
 
             return instance;
         }
 
-        private void OnTakeFromPool(KnifeView knife)
+        private void OnTakeFromPool(IKnifeView knife)
         {
-            knife.transform.SetParent(_container, false);
-            knife.gameObject.SetActive(true);
+            var knifeObject = ToKnifeView(knife);
+            if (knifeObject == null)
+            {
+                return;
+            }
+
+            knifeObject.transform.SetParent(_container, false);
+            knifeObject.gameObject.SetActive(true);
         }
 
-        private void OnReturnedToPool(KnifeView knife)
+        private void OnReturnedToPool(IKnifeView knife)
         {
+            var knifeObject = ToKnifeView(knife);
+            if (knifeObject == null)
+            {
+                return;
+            }
+
             knife.StopReturnTimer();
 
-            if (knife.transform.parent != _container)
+            if (knifeObject.transform.parent != _container)
             {
-                knife.transform.SetParent(_container, false);
+                knifeObject.transform.SetParent(_container, false);
             }
 
-            knife.gameObject.SetActive(false);
+            knifeObject.gameObject.SetActive(false);
         }
 
-        private void OnDestroyPoolObject(KnifeView knife)
+        private void OnDestroyPoolObject(IKnifeView knife)
         {
-            if (knife != null)
+            var knifeObject = ToKnifeView(knife);
+            if (knifeObject == null)
             {
-                Object.Destroy(knife.gameObject);
+                return;
             }
+
+            Object.Destroy(knifeObject.gameObject);
         }
 
         public void Dispose()
@@ -220,9 +241,10 @@ namespace Features.GamePlay.Scripts.Implementation
 
         public void SpawnKnife(Vector3 position, Vector3 rotationEuler, Vector3 scale)
         {
-            var knife = GetKnife();
+            var knife = GetKnife() as KnifeView;
             if (knife == null)
             {
+                Debug.LogError("[KnifePoolService] IKnifeView is not KnifeView or null!");
                 return;
             }
 
@@ -251,13 +273,25 @@ namespace Features.GamePlay.Scripts.Implementation
         {
             await UniTask.Yield();
             _readyKnife = await GetKnifeAsync();
+            var readyKnifeObject = _readyKnife as KnifeView;
 
-            if (_readyKnife != null)
+            if (_readyKnife != null && readyKnifeObject != null)
             {
-                var knifeTransform = _readyKnife.transform;
+                var knifeTransform = readyKnifeObject.transform;
                 knifeTransform.SetLocalPositionAndRotation(_spawnPos, Quaternion.Euler(_spawnRot));
                 knifeTransform.localScale = _spawnScale;
             }
+        }
+
+        private KnifeView ToKnifeView(IKnifeView knife)
+        {
+            var knifeObject = knife as KnifeView;
+            if (knifeObject == null)
+            {
+                Debug.LogError("[KnifePoolService] IKnifeView is not KnifeView or null!");
+            }
+
+            return knifeObject;
         }
     }
 }

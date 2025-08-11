@@ -1,20 +1,21 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Features.GamePlay.Scripts.Declaration;
 using UnityEngine;
 
 namespace Features.GamePlay.Scripts.Presentation
 {
-    public class KnifeView : MonoBehaviour
+    public class KnifeView : MonoBehaviour, IKnifeView
     {
-        private Action<KnifeView> _readyReturnToPool;
+        private Action<IKnifeView> _readyReturnToPool;
         private CancellationTokenSource _returnCts;
 
         private Vector3 _moveDirection;
         private float _moveSpeed;
         private bool _isFlying;
 
-        public void Initialize(Action<KnifeView> readyReturnToPool)
+        public void Initialize(Action<IKnifeView> readyReturnToPool)
         {
             _readyReturnToPool = readyReturnToPool;
         }
