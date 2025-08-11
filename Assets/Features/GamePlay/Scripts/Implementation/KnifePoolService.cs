@@ -13,6 +13,7 @@ namespace Features.GamePlay.Scripts.Implementation
 {
     public class KnifePoolService : IKnifePoolService, IInitializable, IDisposable
     {
+        private readonly float _defaultReturnTime = 5f; //todo get from remote config
         private readonly KnifeView _knifePrefab;
         private readonly Transform _container;
         private readonly bool _collectionChecks = true;
@@ -23,6 +24,7 @@ namespace Features.GamePlay.Scripts.Implementation
         private int _maxPoolSize;
         private readonly int _initialPoolSize;
 
+        //todo make maxpoolsize logic(increase pool size or rectreacte knifes from old knifes)
         public KnifePoolService(
             KnifeView knifePrefab,
             Transform container,
@@ -169,7 +171,10 @@ namespace Features.GamePlay.Scripts.Implementation
         private KnifeView CreatePooledItem()
         {
             var instance = Object.Instantiate(_knifePrefab, _container);
+
             instance.gameObject.SetActive(false);
+            instance.Initialize(ReleaseKnife);
+
             return instance;
         }
 
@@ -177,10 +182,14 @@ namespace Features.GamePlay.Scripts.Implementation
         {
             knife.transform.SetParent(_container, false);
             knife.gameObject.SetActive(true);
+
+            knife.StartReturnTimer(_defaultReturnTime);
         }
 
         private void OnReturnedToPool(KnifeView knife)
         {
+            knife.StopReturnTimer();
+
             if (knife.transform.parent != _container)
             {
                 knife.transform.SetParent(_container, false);
@@ -213,9 +222,9 @@ namespace Features.GamePlay.Scripts.Implementation
                 return;
             }
 
-            knife.transform.position = position;
-            knife.transform.rotation = Quaternion.Euler(rotationEuler);
-            knife.transform.localScale = scale;
+            var knifeTransform = knife.transform;
+            knifeTransform.SetPositionAndRotation(position, Quaternion.Euler(rotationEuler));
+            knifeTransform.localScale = scale;
         }
     }
 }

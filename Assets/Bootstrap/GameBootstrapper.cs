@@ -12,9 +12,9 @@ namespace Bootstrap
     public class GameBootstrapper : IStartable
     {
         private readonly IFirebaseService _firebaseService;
-        private readonly RemoteConfigService _remoteConfigService;
         private readonly IInputSystemService _inputSystemService;
         private readonly IKnifePoolService _knifePoolService;
+        private readonly RemoteConfigService _remoteConfigService;
 
         public GameBootstrapper(
             IFirebaseService firebaseService,

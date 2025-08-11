@@ -6,6 +6,11 @@ namespace Core
 {
     public class InputSystemService : IInputSystemService, IDisposable
     {
+        public void Dispose()
+        {
+            InputActions.Dispose();
+        }
+
         public InputActions InputActions { get; private set; }
 
         public void Initialize()
@@ -29,11 +34,6 @@ namespace Core
             return Mouse.current != null
                 ? Mouse.current.position.ReadValue()
                 : Vector2.zero;
-        }
-
-        public void Dispose()
-        {
-            InputActions.Dispose();
         }
     }
 }

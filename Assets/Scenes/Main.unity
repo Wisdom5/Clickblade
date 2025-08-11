@@ -727,10 +727,10 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  knifePrefab: {fileID: 6158795911925704483, guid: 30d797cca3d69a54798fa3e00787f7c2, type: 3}
-  knifeContainer: {fileID: 1310252084}
-  initialPoolSize: 10
-  maxPoolSize: 50
+  _knifePrefab: {fileID: 6158795911925704483, guid: 30d797cca3d69a54798fa3e00787f7c2, type: 3}
+  _knifeContainer: {fileID: 1310252084}
+  _initialPoolSize: 10
+  _maxPoolSize: 50
 --- !u!33 &7013203737904772668
 MeshFilter:
   m_ObjectHideFlags: 0

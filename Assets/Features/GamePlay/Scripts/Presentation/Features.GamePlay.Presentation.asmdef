@@ -1,19 +1,20 @@
 {
-    "name": "Features.GamePlay.Presentation",
-    "rootNamespace": "",
-    "references": [
-        "Core",
-        "VContainer",
-        "Unity.InputSystem",
-        "Features.GamePlay.Declaration"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "Features.GamePlay.Presentation",
+  "rootNamespace": "",
+  "references": [
+    "Core",
+    "VContainer",
+    "Unity.InputSystem",
+    "Features.GamePlay.Declaration",
+    "UniTask"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }
