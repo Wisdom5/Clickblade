@@ -25,11 +25,10 @@ namespace Features.GamePlay.Scripts.Presentation
 
         private void OnTap(InputAction.CallbackContext ctx)
         {
-            _knifePoolService.SpawnKnife(
-                new Vector3(2.3f, -2.04f, -2.88f),
-                new Vector3(0f, 90f, 90f),
-                new Vector3(40f, 40f, 40f)
-            );
+            if (_knifePoolService.HasReadyKnife)
+            {
+                _knifePoolService.ThrowReadyKnife(Vector3.left, 20f);
+            }
         }
 
         private void OnDestroy()

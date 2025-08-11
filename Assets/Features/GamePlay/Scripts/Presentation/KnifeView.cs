@@ -7,19 +7,22 @@ namespace Features.GamePlay.Scripts.Presentation
 {
     public class KnifeView : MonoBehaviour
     {
-        private Action<KnifeView> _onReturnToPool;
+        private Action<KnifeView> _readyReturnToPool;
         private CancellationTokenSource _returnCts;
 
-        public void Initialize(Action<KnifeView> onReturnToPool)
+        private Vector3 _moveDirection;
+        private float _moveSpeed;
+        private bool _isFlying;
+
+        public void Initialize(Action<KnifeView> readyReturnToPool)
         {
-            _onReturnToPool = onReturnToPool;
+            _readyReturnToPool = readyReturnToPool;
         }
 
-        public void StartReturnTimer(float delay = 5f)
+        private void StartReturnTimer(float delay = 5f)
         {
             StopReturnTimer();
             _returnCts = new CancellationTokenSource();
-
             ReturnAfterDelayAsync(delay, _returnCts.Token).Forget();
         }
 
@@ -30,6 +33,30 @@ namespace Features.GamePlay.Scripts.Presentation
             _returnCts = null;
         }
 
+        public void Throw(Vector3 direction, float speed, float lifeTime)
+        {
+            _moveDirection = direction.normalized;
+            _moveSpeed = speed;
+            _isFlying = true;
+
+            StartReturnTimer(lifeTime);
+        }
+
+        private void Update()
+        {
+            if (_isFlying)
+            {
+                transform.position += _moveDirection * (_moveSpeed * Time.deltaTime);
+            }
+        }
+
+        private void ReadyReturnToPool()
+        {
+            _isFlying = false;
+            StopReturnTimer();
+            _readyReturnToPool?.Invoke(this);
+        }
+
         private async UniTask ReturnAfterDelayAsync(float delay, CancellationToken cancellationToken)
         {
             try
@@ -38,29 +65,13 @@ namespace Features.GamePlay.Scripts.Presentation
 
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    ReturnToPool();
+                    ReadyReturnToPool();
                 }
             }
             catch (OperationCanceledException)
             {
-                Debug.LogWarning("[KnifeView] Operation ReturnAfterDelayAsync cancelled.");
+                Debug.LogWarning("[KnifeView] Cancelled ReturnAfterDelayAsync.");
             }
-        }
-
-        public void ReturnToPool()
-        {
-            StopReturnTimer();
-            _onReturnToPool?.Invoke(this);
-        }
-
-        private void OnDisable()
-        {
-            StopReturnTimer();
-        }
-
-        private void OnDestroy()
-        {
-            StopReturnTimer();
         }
     }
 }

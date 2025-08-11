@@ -38,6 +38,7 @@ namespace Bootstrap
             try
             {
                 _inputSystemService.Initialize();
+                _knifePoolService.Initialize();
                 await _firebaseService.InitializeAsync();
                 await _remoteConfigService.InitializeAsync();
 

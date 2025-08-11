@@ -6,13 +6,15 @@ using Features.GamePlay.Scripts.Declaration;
 using Features.GamePlay.Scripts.Presentation;
 using UnityEngine;
 using UnityEngine.Pool;
-using VContainer.Unity;
 using Object = UnityEngine.Object;
 
 namespace Features.GamePlay.Scripts.Implementation
 {
-    public class KnifePoolService : IKnifePoolService, IInitializable, IDisposable
+    public class KnifePoolService : IKnifePoolService, IDisposable
     {
+        private readonly Vector3 _spawnPos = new(0, 0, 0);
+        private readonly Vector3 _spawnRot = new(0, 90, 90);
+        private readonly Vector3 _spawnScale = new(40, 40, 40);
         private readonly float _defaultReturnTime = 5f; //todo get from remote config
         private readonly KnifeView _knifePrefab;
         private readonly Transform _container;
@@ -20,9 +22,12 @@ namespace Features.GamePlay.Scripts.Implementation
         private readonly bool _disableCollectionChecksInRelease = true;
 
         private readonly List<KnifeView> _activeKnives = new();
+        private KnifeView _readyKnife;
         private IObjectPool<KnifeView> _pool;
         private int _maxPoolSize;
         private readonly int _initialPoolSize;
+
+        public bool HasReadyKnife => _readyKnife != null;
 
         //todo make maxpoolsize logic(increase pool size or rectreacte knifes from old knifes)
         public KnifePoolService(
@@ -39,6 +44,7 @@ namespace Features.GamePlay.Scripts.Implementation
 
         public void Initialize()
         {
+            PrepareNextKnife().Forget();
             Debug.Log("[KnifePoolService]  Initialized.");
         }
 
@@ -182,8 +188,6 @@ namespace Features.GamePlay.Scripts.Implementation
         {
             knife.transform.SetParent(_container, false);
             knife.gameObject.SetActive(true);
-
-            knife.StartReturnTimer(_defaultReturnTime);
         }
 
         private void OnReturnedToPool(KnifeView knife)
@@ -225,6 +229,35 @@ namespace Features.GamePlay.Scripts.Implementation
             var knifeTransform = knife.transform;
             knifeTransform.SetPositionAndRotation(position, Quaternion.Euler(rotationEuler));
             knifeTransform.localScale = scale;
+        }
+
+        public void ThrowReadyKnife(Vector3 direction, float speed)
+        {
+            if (_readyKnife == null)
+            {
+                Debug.LogWarning("[KnifePoolService] No knife ready to throw!");
+                return;
+            }
+
+            var thrownKnife = _readyKnife;
+            _readyKnife = null;
+
+            thrownKnife.Throw(direction, speed, _defaultReturnTime);
+
+            PrepareNextKnife().Forget();
+        }
+
+        private async UniTaskVoid PrepareNextKnife()
+        {
+            await UniTask.Yield();
+            _readyKnife = await GetKnifeAsync();
+
+            if (_readyKnife != null)
+            {
+                var knifeTransform = _readyKnife.transform;
+                knifeTransform.SetLocalPositionAndRotation(_spawnPos, Quaternion.Euler(_spawnRot));
+                knifeTransform.localScale = _spawnScale;
+            }
         }
     }
 }
