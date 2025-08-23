@@ -15,17 +15,20 @@ namespace Bootstrap
         private readonly IInputSystemService _inputSystemService;
         private readonly IKnifePoolService _knifePoolService;
         private readonly RemoteConfigService _remoteConfigService;
+        private readonly PerformanceService _performanceService;
 
         public GameBootstrapper(
             IFirebaseService firebaseService,
             RemoteConfigService remoteConfigService,
             IInputSystemService inputService,
-            IKnifePoolService knifePoolService)
+            IKnifePoolService knifePoolService,
+            PerformanceService performanceService)
         {
             _firebaseService = firebaseService;
             _remoteConfigService = remoteConfigService;
             _inputSystemService = inputService;
             _knifePoolService = knifePoolService;
+            _performanceService = performanceService;
         }
 
         public void Start()
@@ -37,6 +40,7 @@ namespace Bootstrap
         {
             try
             {
+                _performanceService.Initialize();
                 _inputSystemService.Initialize();
                 _knifePoolService.Initialize();
                 await _firebaseService.InitializeAsync();

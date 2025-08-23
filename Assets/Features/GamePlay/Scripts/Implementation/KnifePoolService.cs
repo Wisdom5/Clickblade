@@ -18,6 +18,7 @@ namespace Features.GamePlay.Scripts.Implementation
         private readonly float _defaultReturnTime = 5f; //todo get from remote config
         private readonly IKnifeView _knifePrefab;
         private readonly Transform _container;
+        private readonly IKnifeThrowService _knifeThrowService;
         private readonly bool _collectionChecks = true;
         private readonly bool _disableCollectionChecksInRelease = true;
 
@@ -33,11 +34,13 @@ namespace Features.GamePlay.Scripts.Implementation
         public KnifePoolService(
             IKnifeView knifePrefab,
             Transform container,
+            IKnifeThrowService knifeThrowService,
             int initialPoolSize = 10,
             int maxPoolSize = 50)
         {
             _knifePrefab = knifePrefab;
             _container = container;
+            _knifeThrowService = knifeThrowService ?? throw new ArgumentNullException(nameof(knifeThrowService));
             _initialPoolSize = initialPoolSize;
             _maxPoolSize = maxPoolSize;
         }
@@ -185,7 +188,7 @@ namespace Features.GamePlay.Scripts.Implementation
             var instance = Object.Instantiate(knifeObject, _container);
 
             instance.gameObject.SetActive(false);
-            _knifePrefab.Initialize(ReleaseKnife);
+            instance.Initialize(ReleaseKnife);
 
             return instance;
         }
@@ -210,7 +213,7 @@ namespace Features.GamePlay.Scripts.Implementation
                 return;
             }
 
-            knife.StopReturnTimer();
+            knife.StopLifetimeTimer();
 
             if (knifeObject.transform.parent != _container)
             {
@@ -264,7 +267,7 @@ namespace Features.GamePlay.Scripts.Implementation
             var thrownKnife = _readyKnife;
             _readyKnife = null;
 
-            thrownKnife.Throw(direction, speed, _defaultReturnTime);
+            _knifeThrowService.ThrowKnife(thrownKnife, direction, speed, _defaultReturnTime);
 
             PrepareNextKnife().Forget();
         }
@@ -285,11 +288,12 @@ namespace Features.GamePlay.Scripts.Implementation
 
         private KnifeView ToKnifeView(IKnifeView knife)
         {
-            var knifeObject = knife as KnifeView;
-            if (knifeObject == null)
+            if (knife == null)
             {
                 Debug.LogError("[KnifePoolService] IKnifeView is not KnifeView or null!");
             }
+
+            var knifeObject = knife as KnifeView;
 
             return knifeObject;
         }

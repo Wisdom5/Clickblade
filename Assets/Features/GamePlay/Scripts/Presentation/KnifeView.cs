@@ -9,43 +9,49 @@ namespace Features.GamePlay.Scripts.Presentation
     public class KnifeView : MonoBehaviour, IKnifeView
     {
         private Action<IKnifeView> _readyReturnToPool;
-        private CancellationTokenSource _returnCts;
+        private CancellationTokenSource _lifetimeCts;
 
         private Vector3 _moveDirection;
         private float _moveSpeed;
-        private bool _isFlying;
+        private bool _isMoving;
+
+        public Transform Transform => transform;
 
         public void Initialize(Action<IKnifeView> readyReturnToPool)
         {
+            Debug.Log("[KnifeView] Initialize KnifeView");
             _readyReturnToPool = readyReturnToPool;
         }
 
-        private void StartReturnTimer(float delay = 5f)
+        public void StartMovement(Vector3 direction, float speed)
         {
-            StopReturnTimer();
-            _returnCts = new CancellationTokenSource();
-            ReturnAfterDelayAsync(delay, _returnCts.Token).Forget();
-        }
-
-        public void StopReturnTimer()
-        {
-            _returnCts?.Cancel();
-            _returnCts?.Dispose();
-            _returnCts = null;
-        }
-
-        public void Throw(Vector3 direction, float speed, float lifeTime)
-        {
-            _moveDirection = direction.normalized;
+            _moveDirection = direction;
             _moveSpeed = speed;
-            _isFlying = true;
+            _isMoving = true;
+        }
 
-            StartReturnTimer(lifeTime);
+        public void StopMovement()
+        {
+            _isMoving = false;
+        }
+
+        public void StartLifetimeTimer(float lifetime)
+        {
+            StopLifetimeTimer();
+            _lifetimeCts = new CancellationTokenSource();
+            ReturnAfterDelayAsync(lifetime, _lifetimeCts.Token).Forget();
+        }
+
+        public void StopLifetimeTimer()
+        {
+            _lifetimeCts?.Cancel();
+            _lifetimeCts?.Dispose();
+            _lifetimeCts = null;
         }
 
         private void Update()
         {
-            if (_isFlying)
+            if (_isMoving)
             {
                 transform.position += _moveDirection * (_moveSpeed * Time.deltaTime);
             }
@@ -53,8 +59,8 @@ namespace Features.GamePlay.Scripts.Presentation
 
         private void ReadyReturnToPool()
         {
-            _isFlying = false;
-            StopReturnTimer();
+            StopMovement();
+            StopLifetimeTimer();
             _readyReturnToPool?.Invoke(this);
         }
 
@@ -73,6 +79,11 @@ namespace Features.GamePlay.Scripts.Presentation
             {
                 Debug.LogWarning("[KnifeView] Cancelled ReturnAfterDelayAsync.");
             }
+        }
+
+        private void OnDestroy()
+        {
+            StopLifetimeTimer();
         }
     }
 }

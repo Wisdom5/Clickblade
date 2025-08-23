@@ -6,7 +6,10 @@ namespace Features.GamePlay.Scripts.Declaration
     public interface IKnifeView
     {
         void Initialize(Action<IKnifeView> readyReturnToPool);
-        void StopReturnTimer();
-        void Throw(Vector3 direction, float speed, float lifeTime);
+        void StartMovement(Vector3 direction, float speed);
+        void StopMovement();
+        void StartLifetimeTimer(float lifetime);
+        void StopLifetimeTimer();
+        Transform Transform { get; }
     }
 }
