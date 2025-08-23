@@ -2,6 +2,7 @@
   "name": "Features.Firebase.Implementation",
   "references": [
     "UniTask",
-    "Features.Firebase.Declaration"
+    "Features.Firebase.Declaration",
+    "Utils"
   ]
 }

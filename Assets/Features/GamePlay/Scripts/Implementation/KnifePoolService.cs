@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Features.Firebase.Declaration;
 using Features.GamePlay.Scripts.Declaration;
 using Features.GamePlay.Scripts.Presentation;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Features.GamePlay.Scripts.Implementation
         private readonly IKnifeView _knifePrefab;
         private readonly Transform _container;
         private readonly IKnifeThrowService _knifeThrowService;
+        private readonly IFirebaseRemoteConfigProvider _firebaseRemoteConfigProvider;
         private readonly bool _collectionChecks = true;
         private readonly bool _disableCollectionChecksInRelease = true;
 
@@ -35,12 +37,15 @@ namespace Features.GamePlay.Scripts.Implementation
             IKnifeView knifePrefab,
             Transform container,
             IKnifeThrowService knifeThrowService,
+            IFirebaseRemoteConfigProvider firebaseRemoteConfigProvider,
             int initialPoolSize = 10,
             int maxPoolSize = 50)
         {
             _knifePrefab = knifePrefab;
             _container = container;
             _knifeThrowService = knifeThrowService ?? throw new ArgumentNullException(nameof(knifeThrowService));
+            _firebaseRemoteConfigProvider = firebaseRemoteConfigProvider ??
+                                            throw new ArgumentNullException(nameof(firebaseRemoteConfigProvider));
             _initialPoolSize = initialPoolSize;
             _maxPoolSize = maxPoolSize;
         }

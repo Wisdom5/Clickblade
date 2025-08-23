@@ -25,17 +25,19 @@ namespace Bootstrap
             builder.Register<PerformanceService>(Lifetime.Singleton);
             builder.Register<IInputSystemService, InputSystemService>(Lifetime.Singleton);
             builder.Register<IFirebaseService, FirebaseService>(Lifetime.Singleton);
-            builder.Register<RemoteConfigService>(Lifetime.Singleton);
+            builder.Register<IFirebaseRemoteConfigProvider, FirebaseRemoteConfigProvider>(Lifetime.Singleton);
 
             builder.Register<IKnifeThrowService, KnifeThrowService>(Lifetime.Singleton);
 
             builder.Register(container =>
                 {
-                    var knifeThrowService = container.Resolve<IKnifeThrowService>();
+                    var knifeThrowService = container.Resolve<IKnifeThrowService>();//todo check registration
+                    var firebaseRemoteConfigProvider = container.Resolve<IFirebaseRemoteConfigProvider>();//todo check
                     return new KnifePoolService(
                         _knifePrefab,
                         _knifeContainer,
                         knifeThrowService,
+                        firebaseRemoteConfigProvider,
                         10,
                         _maxPoolSize);
                 }, Lifetime.Singleton)

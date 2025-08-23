@@ -23,11 +23,11 @@ namespace Features.Firebase.Implementation
                 await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
 
                 var welcomeMessage = FirebaseRemoteConfig.DefaultInstance.GetValue("welcome_message").StringValue;
-                Debug.Log($"Fetched remote config value: welcome_message = {welcomeMessage}");
+                Debug.Log($"[RemoteConfigService] Fetched remote config value: welcome_message = {welcomeMessage}");
             }
             catch (Exception exception)
             {
-                Debug.LogError($"Failed to fetch or activate remote config: {exception.Message}");
+                Debug.LogError($"[RemoteConfigService] Failed to fetch or activate remote config: {exception.Message}");
             }
         }
     }

@@ -17,7 +17,7 @@ namespace Features.Firebase.Implementation
                 throw new Exception($"Could not resolve Firebase dependencies: {status}");
             }
 
-            Debug.Log("Firebase initialized successfully.");
+            Debug.Log("[FirebaseService] Firebase initialized successfully.");
         }
     }
 }

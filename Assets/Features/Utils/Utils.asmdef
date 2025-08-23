@@ -1,13 +1,8 @@
 {
-    "name": "Features.GamePlay.Implementation",
+    "name": "Utils",
     "rootNamespace": "",
     "references": [
-        "UniTask",
-        "VContainer",
-        "VContainer.Unity",
-        "Features.GamePlay.Presentation",
-        "Features.GamePlay.Declaration",
-        "Features.Firebase.Declaration"
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
