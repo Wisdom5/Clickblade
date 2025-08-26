@@ -16,7 +16,7 @@ namespace Features.GamePlay.Scripts.Implementation
         private readonly Vector3 _spawnPos = new(0, 0, 0);
         private readonly Vector3 _spawnRot = new(0, 90, 90);
         private readonly Vector3 _spawnScale = new(25, 25, 25);
-        private readonly float _defaultReturnTime = 5f; //todo get from remote config
+        private readonly float _defaultReturnTime = 5f;
         private readonly IKnifeView _knifePrefab;
         private readonly Transform _container;
         private readonly IKnifeThrowService _knifeThrowService;

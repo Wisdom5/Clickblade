@@ -17,6 +17,7 @@ namespace Features.Firebase.Implementation
 
         private const string REMOTE_CONFIG_EXPIRATION_MINUTES = "remote_config_expiration_minutes";
         internal const string WELCOME_MESSAGE = "welcome_message";
+        internal const string KNIFE_FLY_SPEED = "knife_fly_speed";
 
         public IRemoteConfig Config { get; } =
 #if UNITY_EDITOR
@@ -30,7 +31,8 @@ namespace Features.Firebase.Implementation
             return new Dictionary<string, object>
             {
                 { REMOTE_CONFIG_EXPIRATION_MINUTES, 60 },
-                { WELCOME_MESSAGE, "WelcomeMessage hello from FirebaseRemoteConfigProvider!" }
+                { WELCOME_MESSAGE, "WelcomeMessage hello from FirebaseRemoteConfigProvider!" },
+                { KNIFE_FLY_SPEED, 20f }
             };
         }
 

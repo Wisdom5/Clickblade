@@ -6,7 +6,8 @@
     "VContainer",
     "Unity.InputSystem",
     "Features.GamePlay.Declaration",
-    "UniTask"
+    "UniTask",
+    "Features.Firebase.Declaration"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

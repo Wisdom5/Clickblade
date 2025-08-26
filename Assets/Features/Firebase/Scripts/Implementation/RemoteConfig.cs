@@ -11,8 +11,8 @@ namespace Features.Firebase.Implementation
     {
         private FirebaseRemoteConfig FirebaseConfig => FirebaseRemoteConfig.DefaultInstance;
 
-        public string WelcomeMessage =>
-            FirebaseConfig.GetValue(FirebaseRemoteConfigProvider.WELCOME_MESSAGE).StringValue;
+        public string WelcomeMessage => FirebaseConfig.GetValue(FirebaseRemoteConfigProvider.WELCOME_MESSAGE).StringValue;
+        public float KnifeFlySpeed => FirebaseConfig.GetValue(FirebaseRemoteConfigProvider.KNIFE_FLY_SPEED).LongValue;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         internal static void Validate(IRemoteConfig config)

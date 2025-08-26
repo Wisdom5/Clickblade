@@ -1,4 +1,5 @@
 using Core;
+using Features.Firebase.Declaration;
 using Features.GamePlay.Scripts.Declaration;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,12 +11,15 @@ namespace Features.GamePlay.Scripts.Presentation
     {
         private IInputSystemService _inputSystemService;
         private IKnifePoolService _knifePoolService;
+        private IFirebaseRemoteConfigProvider _remoteConfigProvider;
 
         [Inject]
-        public void Construct(IInputSystemService inputSystemService, IKnifePoolService knifePoolService)
+        public void Construct(IInputSystemService inputSystemService, IKnifePoolService knifePoolService,
+            IFirebaseRemoteConfigProvider remoteConfigProvider)
         {
             _inputSystemService = inputSystemService;
             _knifePoolService = knifePoolService;
+            _remoteConfigProvider = remoteConfigProvider;
         }
 
         private void Start()
@@ -27,7 +31,7 @@ namespace Features.GamePlay.Scripts.Presentation
         {
             if (_knifePoolService.HasReadyKnife)
             {
-                _knifePoolService.ThrowReadyKnife(Vector3.left, 20f);
+                _knifePoolService.ThrowReadyKnife(Vector3.left, _remoteConfigProvider.Config.KnifeFlySpeed);
             }
         }
 
