@@ -3,7 +3,6 @@ using System.Threading;
 using Core;
 using Cysharp.Threading.Tasks;
 using Features.Firebase.Declaration;
-using Features.Firebase.Implementation;
 using Features.GamePlay.Scripts.Declaration;
 using UnityEngine;
 using VContainer.Unity;
@@ -41,11 +40,37 @@ namespace Bootstrap
         {
             try
             {
+                #region Infrastructure Layer
+
                 _performanceService.Initialize();
                 _inputSystemService.Initialize();
-                _knifePoolService.Initialize();
                 await _firebaseService.InitializeAsync();
-                await _firebaseRemoteConfigProvider.Initialize(CancellationToken.None);//todo create cts
+
+                #endregion
+
+                #region Configuration Layer
+
+                await _firebaseRemoteConfigProvider.Initialize(CancellationToken.None); //todo create cts
+
+                #endregion
+
+                #region Services Layer
+
+                //Services Layer
+
+                #endregion
+
+                #region Domain Logic Layer
+
+                _knifePoolService.Initialize();
+
+                #endregion
+
+                #region Presentation Layer
+
+                //Presentation Layer
+
+                #endregion
 
                 Debug.Log("[GameBootstrapper] Initialized.");
             }
