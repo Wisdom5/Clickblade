@@ -7,7 +7,7 @@ namespace Features.GamePlay.Scripts.Declaration
         bool HasReadyKnife { get; }
 
         void SpawnKnife(Vector3 position, Vector3 rotationEuler, Vector3 scale);
-        void ThrowReadyKnife(Vector3 direction, float speed);
+        IKnifeView GetReadyKnife();
         void SetMaxPoolSize(int size);
         void ClearActiveKnives();
         void ResetPool();

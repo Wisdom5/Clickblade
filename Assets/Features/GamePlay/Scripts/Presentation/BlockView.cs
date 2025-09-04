@@ -7,8 +7,12 @@ namespace Features.GamePlay.Scripts.Presentation
     {
         [SerializeField]
         private MeshRenderer _meshRenderer;
+        [SerializeField]
+        private BoxCollider _collider;
 
-        public Color Color
+        public Transform BlockTransform => transform;
+
+        public Color BlockColor
         {
             get => _meshRenderer.material.color;
             set => _meshRenderer.material.color = value;

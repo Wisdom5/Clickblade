@@ -10,7 +10,7 @@ namespace Features.GamePlay.Scripts.Presentation
         private readonly Color32 _colorA = new(237, 106, 90, 255);
         private readonly Color32 _colorB = new(243, 156, 145, 255);
 
-        private readonly int _blockCount = 50;
+        private readonly int _blockCount = 100;
         private readonly float _stepY = 0.25f;
 
         private void Start()
@@ -28,7 +28,7 @@ namespace Features.GamePlay.Scripts.Presentation
                 var blockView = Instantiate(_blockPrefab, transform);
                 blockView.transform.localPosition = pos;
 
-                blockView.Color = i % 2 == 0 ? _colorA : _colorB;
+                blockView.BlockColor = i % 2 == 0 ? _colorA : _colorB;
             }
         }
 

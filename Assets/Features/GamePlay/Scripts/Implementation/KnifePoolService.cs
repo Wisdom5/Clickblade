@@ -16,10 +16,8 @@ namespace Features.GamePlay.Scripts.Implementation
         private readonly Vector3 _spawnPos = new(0, 0, 0);
         private readonly Vector3 _spawnRot = new(0, 90, 90);
         private readonly Vector3 _spawnScale = new(25, 25, 25);
-        private readonly float _defaultReturnTime = 5f;
         private readonly IKnifeView _knifePrefab;
         private readonly Transform _container;
-        private readonly IKnifeThrowService _knifeThrowService;
         private readonly IFirebaseRemoteConfigProvider _firebaseRemoteConfigProvider;
         private readonly bool _collectionChecks = true;
         private readonly bool _disableCollectionChecksInRelease = true;
@@ -43,7 +41,6 @@ namespace Features.GamePlay.Scripts.Implementation
         {
             _knifePrefab = knifePrefab;
             _container = container;
-            _knifeThrowService = knifeThrowService ?? throw new ArgumentNullException(nameof(knifeThrowService));
             _firebaseRemoteConfigProvider = firebaseRemoteConfigProvider ??
                                             throw new ArgumentNullException(nameof(firebaseRemoteConfigProvider));
             _initialPoolSize = initialPoolSize;
@@ -98,7 +95,7 @@ namespace Features.GamePlay.Scripts.Implementation
             return knife;
         }
 
-        public async UniTask<IKnifeView> GetKnifeAsync(CancellationToken cancellationToken = default)
+        private async UniTask<IKnifeView> GetKnifeAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -219,6 +216,8 @@ namespace Features.GamePlay.Scripts.Implementation
             }
 
             knife.StopLifetimeTimer();
+            knife.StopMovement();
+            knife.ResetState();
 
             if (knifeObject.transform.parent != _container)
             {
@@ -261,20 +260,20 @@ namespace Features.GamePlay.Scripts.Implementation
             knifeTransform.localScale = scale;
         }
 
-        public void ThrowReadyKnife(Vector3 direction, float speed)
+        public IKnifeView GetReadyKnife()
         {
             if (_readyKnife == null)
             {
-                Debug.LogWarning("[KnifePoolService] No knife ready to throw!");
-                return;
+                Debug.LogWarning("[KnifePoolService] No knife ready!");
+                return null;
             }
 
-            var thrownKnife = _readyKnife;
+            var knifeToReturn = _readyKnife;
             _readyKnife = null;
 
-            _knifeThrowService.ThrowKnife(thrownKnife, direction, speed, _defaultReturnTime);
-
             PrepareNextKnife().Forget();
+
+            return knifeToReturn;
         }
 
         private async UniTaskVoid PrepareNextKnife()

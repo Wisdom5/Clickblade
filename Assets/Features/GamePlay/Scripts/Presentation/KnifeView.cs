@@ -8,26 +8,32 @@ namespace Features.GamePlay.Scripts.Presentation
 {
     public class KnifeView : MonoBehaviour, IKnifeView
     {
-        private Action<IKnifeView> _readyReturnToPool;
+        [SerializeField]
+        private Transform _tip;
+
+        public event Action<IKnifeView, IBlockView> BlockHit;
+
+        public Transform KnifeTransform => transform;
+        public GameObject KnifeGameObject => gameObject;
+
+        private Action<IKnifeView> _releaseCallback;
         private CancellationTokenSource _lifetimeCts;
 
+        private bool _isMoving;
         private Vector3 _moveDirection;
         private float _moveSpeed;
-        private bool _isMoving;
 
-        public Transform Transform => transform;
-
-        public void Initialize(Action<IKnifeView> readyReturnToPool)
+        public void Initialize(Action<IKnifeView> releaseCallback)
         {
-            Debug.Log("[KnifeView] Initialize KnifeView");
-            _readyReturnToPool = readyReturnToPool;
+            _releaseCallback = releaseCallback;
+            _isMoving = false;
         }
 
         public void StartMovement(Vector3 direction, float speed)
         {
-            _moveDirection = direction;
-            _moveSpeed = speed;
             _isMoving = true;
+            _moveDirection = direction.normalized;
+            _moveSpeed = speed;
         }
 
         public void StopMovement()
@@ -39,7 +45,7 @@ namespace Features.GamePlay.Scripts.Presentation
         {
             StopLifetimeTimer();
             _lifetimeCts = new CancellationTokenSource();
-            ReturnAfterDelayAsync(lifetime, _lifetimeCts.Token).Forget();
+            StartLifetimeTimerAsync(lifetime, _lifetimeCts.Token).Forget();
         }
 
         public void StopLifetimeTimer()
@@ -49,36 +55,59 @@ namespace Features.GamePlay.Scripts.Presentation
             _lifetimeCts = null;
         }
 
-        private void Update()
-        {
-            if (_isMoving)
-            {
-                transform.position += _moveDirection * (_moveSpeed * Time.deltaTime);
-            }
-        }
-
-        private void ReadyReturnToPool()
-        {
-            StopMovement();
-            StopLifetimeTimer();
-            _readyReturnToPool?.Invoke(this);
-        }
-
-        private async UniTask ReturnAfterDelayAsync(float delay, CancellationToken cancellationToken)
+        private async UniTaskVoid StartLifetimeTimerAsync(float lifetime, CancellationToken cancellationToken)
         {
             try
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
-
+                await UniTask.Delay(TimeSpan.FromSeconds(lifetime), cancellationToken: cancellationToken);
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    ReadyReturnToPool();
+                    Debug.Log("[KnifeView] Lifetime expired, returning to pool");
+                    _releaseCallback?.Invoke(this);
                 }
             }
             catch (OperationCanceledException)
             {
-                Debug.LogWarning("[KnifeView] Cancelled ReturnAfterDelayAsync.");
             }
+        }
+
+        private void Update()
+        {
+            if (!_isMoving)
+            {
+                return;
+            }
+
+            var distanceThisFrame = _moveSpeed * Time.deltaTime;
+            var start = _tip != null ? _tip.position : transform.position;
+
+            if (Physics.Raycast(start, _moveDirection, out var hit, distanceThisFrame))
+            {
+                transform.position += _moveDirection * hit.distance;
+
+                _isMoving = false;
+                StopLifetimeTimer();
+
+                var blockView = hit.collider.GetComponent<IBlockView>();
+                if (blockView != null)
+                {
+                    BlockHit?.Invoke(this, blockView);
+                }
+            }
+            else
+            {
+                transform.position += _moveDirection * distanceThisFrame;
+            }
+        }
+
+        public void ResetState()
+        {
+            _isMoving = false;
+            _moveDirection = Vector3.zero;
+            _moveSpeed = 0f;
+            StopLifetimeTimer();
+
+            BlockHit = null;
         }
 
         private void OnDestroy()
